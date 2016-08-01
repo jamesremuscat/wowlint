@@ -99,7 +99,7 @@ Block = Struct(
     UBInt8("linecount"),
     Padding(3),
     MetaArray(lambda ctx: ctx.linecount, Line),
-    EnumAdapter(BlockType, UBInt8("blocktype")),
+    EnumAdapter(BlockType, UBInt8("type")),
     Padding(3)
 )
 
@@ -111,9 +111,6 @@ Song = Struct(
     MetaArray(lambda ctx: ctx.blockcount, Block),
     PascalString("author"),
     PascalString("copyright"),
-    EnumAdapter(LicenseType, UBInt8("licenseflag")),
+    EnumAdapter(LicenseType, UBInt8("licensetype")),
     Padding(3)
 )
-
-fi = open("test.wsg", "rb")
-print Song.parse(fi.read())
