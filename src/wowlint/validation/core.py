@@ -1,7 +1,7 @@
-from enum import IntEnum
+from enum import Enum
 
 
-class Severity(IntEnum):
+class Severity(Enum):
     INFO = 0
     WARNING = 1
     ERROR = 2
@@ -9,6 +9,26 @@ class Severity(IntEnum):
 
     def __str__(self):
         return self.name
+
+    def __ge__(self, other):
+        if self.__class__ is other.__class__:
+            return self.value >= other.value
+        return NotImplemented
+
+    def __gt__(self, other):
+        if self.__class__ is other.__class__:
+            return self.value > other.value
+        return NotImplemented
+
+    def __le__(self, other):
+        if self.__class__ is other.__class__:
+            return self.value <= other.value
+        return NotImplemented
+
+    def __lt__(self, other):
+        if self.__class__ is other.__class__:
+            return self.value < other.value
+        return NotImplemented
 
 
 class Lint(object):
