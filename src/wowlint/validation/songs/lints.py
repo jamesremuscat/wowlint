@@ -1,5 +1,5 @@
 from wowlint.validation.core import Severity, Lint
-from wowlint.wowfile import LicenseType
+from wowlint.wowfile import LicenseType, LineType
 
 
 class BlockwiseLint(Lint):
@@ -48,6 +48,19 @@ class HasNoAuthor(Lint):
             return [self.create_issue(filename)]
 
 
+class AllMinorWords(Lint):
+    def __init__(self):
+        self.message = "Entirely uses minor words"
+        self.severity = Severity.WARNING
+
+    def validate(self, filename, song):
+        for block in song.block:
+            for line in block.line:
+                if line.type == LineType.NORMAL:
+                    return None
+        return [self.create_issue(filename)]
+
+
 class TrailingComma(LinewiseLint):
     def __init__(self):
         self.message = "({block}:{line}) Line has trailing comma"
@@ -72,5 +85,6 @@ LINTS = [
     HasNoCopyright(),
     HasNoAuthor(),
     TrailingComma(),
-    NoInitialCapital()
+    NoInitialCapital(),
+    AllMinorWords()
 ]
