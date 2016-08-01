@@ -1,4 +1,4 @@
-from construct import Bytes, MetaArray, Padding, PascalString, Probe, Struct, UBInt8
+from construct import MetaArray, Padding, PascalString, Struct, UBInt8
 
 # ===============================================================================
 # /*
