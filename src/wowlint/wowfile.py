@@ -1,9 +1,7 @@
 import sys
 
-from construct import MetaArray, OneOf, Padding, PascalString, String, Struct, UBInt8
+from construct import If, MetaArray, OneOf, Optional, Padding, PascalString, String, Struct, UBInt8
 from construct.core import Adapter
-from construct.debug import Probe
-from construct.macros import Optional
 from enum import Enum
 
 
@@ -96,8 +94,13 @@ def valuesOf(enum):
 Line = Struct(
     "line",
     PascalString("text"),
-    EnumAdapter(LineType, OneOf(UBInt8("type"), valuesOf(LineType)))
+    If(
+        lambda ctx: ctx._._.format == 1,  # 0 = Really old WoW format without minor words
+        EnumAdapter(LineType, OneOf(UBInt8("type"), valuesOf(LineType))),
+        LineType.NORMAL
+    )
 )
+
 
 Block = Struct(
     "block",
@@ -114,7 +117,9 @@ Song = Struct(
     OneOf(String("header", 8), ['WoW File']),
     Padding(1),
     OneOf(String("filetype", 10), ['Song Words']),
-    Padding(37),
+    Padding(5),
+    UBInt8("format"),
+    Padding(31),
     UBInt8("blockcount"),
     Padding(9),
     OneOf(String("csongdoc", 14), ['CSongDoc::CBlo']),  # The 'ck' is considered padding at start of block
