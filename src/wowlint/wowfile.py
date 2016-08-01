@@ -1,4 +1,4 @@
-from construct import Bytes, MetaArray, Padding, Probe, Struct, UBInt8
+from construct import Bytes, MetaArray, Padding, PascalString, Probe, Struct, UBInt8
 
 # ===============================================================================
 # /*
@@ -53,21 +53,10 @@ from construct import Bytes, MetaArray, Padding, Probe, Struct, UBInt8
 #    * 1 - minor words
 
 
-CString = Struct(
-    "CString",
-    UBInt8("length"),
-    Bytes("text", lambda ctx: ctx.length)
-)
-
-LineType = Struct(
-    "LineType",
-    UBInt8("type")
-)
-
 Line = Struct(
     "line",
-    Struct("text", CString),
-    Struct("type", LineType)
+    PascalString("text"),
+    UBInt8("type")
 )
 
 Block = Struct(
@@ -86,8 +75,8 @@ Song = Struct(
     UBInt8("blockcount"),
     Padding(23),
     MetaArray(lambda ctx: ctx.blockcount, Block),
-    Struct("author", CString),
-    Struct("copyright", CString),
+    PascalString("author"),
+    PascalString("copyright"),
     UBInt8("licenseflag"),
     Padding(3)
 )
