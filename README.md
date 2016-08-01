@@ -1,6 +1,9 @@
 # wowlinter
 ## Linter for Words of Worship resource files
 
+[![Build Status](https://travis-ci.org/jamesremuscat/wowlinter.svg?branch=master)](https://travis-ci.org/jamesremuscat/wowlinter)
+[![Coverage Status](https://coveralls.io/repos/github/jamesremuscat/wowlinter/badge.svg?branch=master)](https://coveralls.io/github/jamesremuscat/wowlinter?branch=master)
+
 [Words of Worship](http://www.wordsofworship.com) is a popular tool for
 projecting song lyrics, liturgy and other textual media in churches and houses
 of worship.
