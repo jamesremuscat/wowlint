@@ -1,4 +1,4 @@
-from construct import MetaArray, Padding, PascalString, Struct, UBInt8
+from construct import MetaArray, OneOf, Padding, PascalString, String, Struct, UBInt8
 from construct.core import Adapter
 from enum import Enum
 
@@ -54,8 +54,6 @@ from enum import Enum
 #    * === LINETYPE ===
 #    * 0 - normal
 #    * 1 - minor words
-
-
 class LineType(Enum):
     NORMAL = 0
     MINOR = 1
@@ -87,10 +85,14 @@ class EnumAdapter(Adapter):
         return self.enumClass(obj)
 
 
+def valuesOf(enum):
+    return map(lambda x: x.value, enum)
+
+
 Line = Struct(
     "line",
     PascalString("text"),
-    EnumAdapter(LineType, UBInt8("type"))
+    EnumAdapter(LineType, OneOf(UBInt8("type"), valuesOf(LineType)))
 )
 
 Block = Struct(
@@ -99,18 +101,22 @@ Block = Struct(
     UBInt8("linecount"),
     Padding(3),
     MetaArray(lambda ctx: ctx.linecount, Line),
-    EnumAdapter(BlockType, UBInt8("type")),
+    EnumAdapter(BlockType, OneOf(UBInt8("type"), valuesOf(BlockType))),
     Padding(3)
 )
 
 Song = Struct(
     "song",
-    Padding(56),
+    OneOf(String("header", 8), ['WoW File']),
+    Padding(1),
+    OneOf(String("filetype", 10), ['Song Words']),
+    Padding(37),
     UBInt8("blockcount"),
-    Padding(23),
+    Padding(9),
+    OneOf(String("csongdoc", 14), ['CSongDoc::CBlo']),  # The 'ck' is considered padding at start of block
     MetaArray(lambda ctx: ctx.blockcount, Block),
     PascalString("author"),
     PascalString("copyright"),
-    EnumAdapter(LicenseType, UBInt8("licensetype")),
+    EnumAdapter(LicenseType, OneOf(UBInt8("licensetype"), valuesOf(LicenseType))),
     Padding(3)
 )
