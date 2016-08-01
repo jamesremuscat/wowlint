@@ -20,7 +20,7 @@ def main():
             longestFileName = max(longestFileName, len(subject))
 
     for issue in issues:
-        print "{:{width}}: {:6} {}".format(issue.sourceFile, issue.severity, issue.message, width=longestFileName + 2)
+        print "{:{width}}: {:8} {}".format(issue.sourceFile, issue.severity, issue.message, width=longestFileName + 2)
 
 if __name__ == "__main__":
     main()
