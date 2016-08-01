@@ -1,4 +1,7 @@
 from construct import MetaArray, Padding, PascalString, Struct, UBInt8
+from construct.core import Adapter
+from enum import Enum
+
 
 # ===============================================================================
 # /*
@@ -53,10 +56,41 @@ from construct import MetaArray, Padding, PascalString, Struct, UBInt8
 #    * 1 - minor words
 
 
+class LineType(Enum):
+    NORMAL = 0
+    MINOR = 1
+
+
+class BlockType(Enum):
+    VERSE = 0
+    CHORUS = 1
+    BRIDGE = 2
+
+
+class LicenseType(Enum):
+    CCL = 0
+    AUTHOR_EXPLICIT_PERMISSION = 1
+    PUBLIC_DOMAIN = 2
+    COPYRIGHT_EXPIRED = 3
+    OTHER = 4
+
+
+class EnumAdapter(Adapter):
+    def __init__(self, enumClass, subcon):
+        super(Adapter, self).__init__(subcon)
+        self.enumClass = enumClass
+
+    def _encode(self, obj, context):
+        return obj.value
+
+    def _decode(self, obj, context):
+        return self.enumClass(obj)
+
+
 Line = Struct(
     "line",
     PascalString("text"),
-    UBInt8("type")
+    EnumAdapter(LineType, UBInt8("type"))
 )
 
 Block = Struct(
@@ -65,7 +99,7 @@ Block = Struct(
     UBInt8("linecount"),
     Padding(3),
     MetaArray(lambda ctx: ctx.linecount, Line),
-    UBInt8("blocktype"),
+    EnumAdapter(BlockType, UBInt8("blocktype")),
     Padding(3)
 )
 
@@ -77,7 +111,7 @@ Song = Struct(
     MetaArray(lambda ctx: ctx.blockcount, Block),
     PascalString("author"),
     PascalString("copyright"),
-    UBInt8("licenseflag"),
+    EnumAdapter(LicenseType, UBInt8("licenseflag")),
     Padding(3)
 )
 

@@ -1,5 +1,7 @@
-from setuptools import setup, find_packages
 import re
+
+from setuptools import setup, find_packages
+
 
 VERSIONFILE = "src/wowlint/_version.py"
 verstr = "unknown"
@@ -20,7 +22,7 @@ setup(
     author='James Muscat',
     author_email='jamesremuscat@gmail.com',
     url='https://github.com/jamesremuscat/wowlint',
-    install_requires=['construct'],
+    install_requires=['construct', 'enum34'],
     # setup_requires=['nose>=1.0'],
     # tests_require = ['mock'],
     packages=find_packages('src', exclude=["*.tests"]),
