@@ -8,7 +8,7 @@ class HasNoCopyright(Lint):
         self.severity = Severity.ERROR
 
     def validate(self, filename, song):
-        if song.copyright == "" and song.licensetype == LicenseType.CCL:
+        if song.copyright == "" and (not song.license or song.license.type == LicenseType.CCL):
             return [self.create_issue(filename)]
 
 

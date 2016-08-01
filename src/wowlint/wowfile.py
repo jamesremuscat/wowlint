@@ -1,5 +1,9 @@
+import sys
+
 from construct import MetaArray, OneOf, Padding, PascalString, String, Struct, UBInt8
 from construct.core import Adapter
+from construct.debug import Probe
+from construct.macros import Optional
 from enum import Enum
 
 
@@ -117,6 +121,17 @@ Song = Struct(
     MetaArray(lambda ctx: ctx.blockcount, Block),
     PascalString("author"),
     PascalString("copyright"),
-    EnumAdapter(LicenseType, OneOf(UBInt8("licensetype"), valuesOf(LicenseType))),
-    Padding(3)
+    Optional(
+        Struct(
+            "license",
+            EnumAdapter(LicenseType, OneOf(UBInt8("type"), valuesOf(LicenseType))),
+            Padding(3)
+        )
+    )
 )
+
+
+if __name__ == "__main__":
+    filename = sys.argv[1]
+    with open(filename, "rb") as f:
+        print Song.parse(f.read())
