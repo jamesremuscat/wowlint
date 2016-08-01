@@ -29,7 +29,7 @@ setup(
     package_dir = {'':'src'},
     entry_points={
         'console_scripts': [
-            # 'av-control = staldates.avcontrol:main'
+            'wowlint = wowlint.command:main'
         ],
     }
 )
