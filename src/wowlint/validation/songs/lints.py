@@ -12,6 +12,17 @@ class HasNoCopyright(Lint):
             return [self.create_issue(filename)]
 
 
+class HasNoAuthor(Lint):
+    def __init__(self):
+        self.message = "No author provided"
+        self.severity = Severity.ERROR
+
+    def validate(self, filename, song):
+        if song.author == "":
+            return [self.create_issue(filename)]
+
+
 LINTS = [
-    HasNoCopyright()
+    HasNoCopyright(),
+    HasNoAuthor()
 ]
