@@ -17,7 +17,7 @@ class TestSongFile(unittest.TestCase):
 
             self.assertEqual(4, song.blockcount)
             self.assertEqual("Matt Redman", song.author)
-            self.assertEqual(LicenseType.CCL, song.licensetype)
+            self.assertEqual(LicenseType.CCL, song.license.type)
 
             self.assertEqual(4, len(song.block))
 
