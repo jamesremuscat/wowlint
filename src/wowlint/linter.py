@@ -1,31 +1,10 @@
 import os
 
-from construct.core import FieldError
-from enum import Enum
+from construct.core import ConstructError
+
+from wowlint.validation.core import Severity, Issue
+from wowlint.validation.songs.lints import LINTS as SONG_LINTS
 from wowlint.wowfile import Song
-
-
-class Severity(Enum):
-    INFO = 0
-    WARNING = 1
-    ERROR = 2
-    FATAL = 3
-
-    def __str__(self):
-        return self.name
-
-
-class Issue(object):
-    def __init__(self, severity, sourceFile, message):
-        self.severity = severity
-        self.sourceFile = sourceFile
-        self.message = message
-
-    def __str__(self):
-        return str([str(self.severity), self.sourceFile, self.message])
-
-    def add_to(self, bucket):
-        bucket.append(self)
 
 
 class Linter(object):
@@ -35,8 +14,12 @@ class Linter(object):
             if filename.endswith(".wow-song") or filename.endswith(".wsg"):
                 try:
                     song = Song.parse(f.read())
-                except FieldError:
-                    Issue(Severity.FATAL, filename, "Not a valid Words of Worship song file").add_to(issues)
+                    for lint in SONG_LINTS:
+                        result = lint.validate(filename, song)
+                        if result:
+                            issues += result
+                except ConstructError as e:
+                    Issue(Severity.FATAL, filename, "{} Not a valid Words of Worship song file".format(e.__class__.__name__)).add_to(issues)
             else:
                 Issue(Severity.INFO, filename, "Unrecognised file extension: {}".format(os.path.splitext(filename)[1])).add_to(issues)
         return issues
