@@ -1,5 +1,7 @@
 import argparse
 import os
+import sys
+
 from wowlint.linter import Linter
 from wowlint.validation.core import Severity
 
@@ -17,10 +19,14 @@ def main():
 
     longestFileName = 0
 
+    minSeverity = Severity.ERROR if args.errors_only else None
+    highestSeverityEncountered = None
+
     for subject in args.file:
         if os.path.isfile(subject):
-            minSeverity = Severity.ERROR if args.errors_only else None
-            issues += linter.lint(subject, minSeverity)
+            subjectIssues = linter.lint(subject, minSeverity)
+            issues += subjectIssues
+            highestSeverityEncountered = max(map(lambda i: i.severity, subjectIssues), highestSeverityEncountered)[0]
             longestFileName = max(longestFileName, len(subject))
 
     if args.list:
@@ -33,6 +39,9 @@ def main():
     else:
         for issue in issues:
             print "{:{width}}: {:8} {}".format(issue.sourceFile, issue.severity, issue.message, width=longestFileName + 2)
+
+    if highestSeverityEncountered >= Severity.ERROR:
+        sys.exit(1)
 
 
 if __name__ == "__main__":
