@@ -12,8 +12,8 @@ class Severity(Enum):
 
 
 class Lint(object):
-    def create_issue(self, filename):
-        return Issue(self.severity, filename, "{} {}".format(self.__class__.__name__, self.message))
+    def create_issue(self, filename, block=0, line=0):
+        return Issue(self.severity, filename, "{} {}".format(self.__class__.__name__, self.message.format(block=block, line=line)))
 
 
 class Issue(object):
