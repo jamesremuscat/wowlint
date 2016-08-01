@@ -15,9 +15,10 @@ class Linter(object):
                 try:
                     song = Song.parse(f.read())
                     for lint in SONG_LINTS:
-                        result = lint.validate(filename, song)
-                        if result:
-                            issues += [r for r in result if r.severity >= minSeverity]
+                        if lint.severity >= minSeverity:
+                            result = lint.validate(filename, song)
+                            if result:
+                                issues += result
                 except ConstructError as e:
                     Issue(Severity.FATAL, filename, "{} Not a valid Words of Worship song file".format(e.__class__.__name__)).add_to(issues)
             else:
