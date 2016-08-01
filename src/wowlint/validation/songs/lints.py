@@ -58,8 +58,19 @@ class TrailingComma(LinewiseLint):
             return [self.create_issue(filename, blockIndex, lineIndex)]
 
 
+class NoInitialCapital(LinewiseLint):
+    def __init__(self):
+        self.message = "({block}:{line}) Line does not start with a capital letter"
+        self.severity = Severity.WARNING
+
+    def validate_line(self, filename, blockIndex, lineIndex, line):
+        if line.text[0] != line.text[0].upper():
+            return [self.create_issue(filename, blockIndex, lineIndex)]
+
+
 LINTS = [
     HasNoCopyright(),
     HasNoAuthor(),
-    TrailingComma()
+    TrailingComma(),
+    NoInitialCapital()
 ]
