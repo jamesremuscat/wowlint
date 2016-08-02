@@ -21,7 +21,7 @@ class Linter(object):
                         if lint.severity >= self.minSeverity:
                             issues += lint.validate(song)
                 except ConstructError as e:
-                    Issue(Severity.FATAL, filename, "{} Not a valid Words of Worship song file".format(e.__class__.__name__)).add_to(issues)
+                    Issue(Severity.FATAL, "{} Not a valid Words of Worship song file".format(e.__class__.__name__)).add_to(issues)
             else:
-                Issue(Severity.INFO, filename, "Unrecognised file extension: {}".format(os.path.splitext(filename)[1])).add_to(issues)
+                Issue(Severity.INFO, "Unrecognised file extension: {}".format(os.path.splitext(filename)[1])).add_to(issues)
         return issues
