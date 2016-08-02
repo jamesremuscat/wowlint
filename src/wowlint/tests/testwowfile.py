@@ -15,15 +15,23 @@ class TestSongFile(unittest.TestCase):
         with getTestFile("test.wsg") as f:
             song = Song.parse(f.read())
 
-            self.assertEqual(4, song.blockcount)
-            self.assertEqual("Matt Redman", song.author)
+            self.assertEqual(3, song.blockcount)
+            self.assertEqual("Test Author", song.author)
+            self.assertEqual("Test Copyright", song.copyright)
             self.assertEqual(LicenseType.CCL, song.license.type)
 
-            self.assertEqual(4, len(song.block))
+            self.assertEqual(3, len(song.block))
 
-            chorus = song.block[0]
-            self.assertEqual(BlockType.CHORUS, chorus.type)
+            verse1 = song.block[0]
+            self.assertEqual(BlockType.VERSE, verse1.type)
 
-            firstLine = chorus.line[0]
-            self.assertEqual("Bless the Lord, O my soul", firstLine.text)
+            firstLine = verse1.line[0]
+            self.assertEqual("Test song, first verse, line major", firstLine.text)
             self.assertEqual(LineType.NORMAL, firstLine.type)
+
+            secondLine = verse1.line[1]
+            self.assertEqual("Test song, first verse, second line minor", secondLine.text)
+            self.assertEqual(LineType.MINOR, secondLine.type)
+
+            self.assertEqual(BlockType.CHORUS, song.block[1].type)
+            self.assertEqual(BlockType.BRIDGE, song.block[2].type)
