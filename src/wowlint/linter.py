@@ -3,7 +3,7 @@ import os
 from construct.core import ConstructError
 
 from wowlint.validation.core import Severity, Issue
-from wowlint.validation.songs.lints import LINTS as SONG_LINTS
+from wowlint.validation.songs import LINTS as SONG_LINTS
 from wowlint.wowfile import Song
 
 
