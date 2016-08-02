@@ -42,7 +42,7 @@ class Issue(object):
         self.sourceFile = sourceFile
         self.message = message
 
-    def __str__(self):
+    def __repr__(self):
         return str([str(self.severity), self.sourceFile, self.message])
 
     def add_to(self, bucket):
