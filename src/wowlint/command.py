@@ -32,7 +32,7 @@ def main():
                 else:
                     for issue in issues:
                         print "{:{width}}: {:8} {}".format(
-                            issue.sourceFile,
+                            subject,
                             issue.severity,
                             issue.message,
                             width=longestFileName + 2

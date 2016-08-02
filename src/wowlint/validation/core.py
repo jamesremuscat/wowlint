@@ -32,27 +32,26 @@ class Severity(Enum):
 
 
 class Lint(object):
-    def validate(self, filename, resource):
-        result = self.validate_resource(filename, resource)
+    def validate(self, resource):
+        result = self.validate_resource(resource)
         if result is None:
             return []
         return result
 
-    def validate_resource(self, filename, resource):
+    def validate_resource(self, resource):
         pass
 
-    def create_issue(self, filename, block=0, line=0):
-        return Issue(self.severity, filename, "{} {}".format(self.__class__.__name__, self.message.format(block=block, line=line)))
+    def create_issue(self, block=0, line=0):
+        return Issue(self.severity, "{} {}".format(self.__class__.__name__, self.message.format(block=block, line=line)))
 
 
 class Issue(object):
-    def __init__(self, severity, sourceFile, message):
+    def __init__(self, severity, message):
         self.severity = severity
-        self.sourceFile = sourceFile
         self.message = message
 
     def __repr__(self):
-        return str([str(self.severity), self.sourceFile, self.message])
+        return str([str(self.severity), self.message])
 
     def add_to(self, bucket):
         bucket.append(self)
