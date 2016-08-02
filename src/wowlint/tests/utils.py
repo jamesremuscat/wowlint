@@ -1,6 +1,6 @@
 import os
 
 
-def getTestFile(filename):
-    path = os.path.join(os.path.dirname(__file__), "data", filename)
+def getTestFile(filename, curModule=__file__):
+    path = os.path.join(os.path.dirname(curModule), "data", filename)
     return open(path, "rb")
