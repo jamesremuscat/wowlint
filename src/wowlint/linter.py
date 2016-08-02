@@ -8,14 +8,17 @@ from wowlint.wowfile import Song
 
 
 class Linter(object):
-    def lint(self, filename, minSeverity=None):
+    def __init__(self, minSeverity=None):
+        self.minSeverity = minSeverity
+
+    def lint(self, filename):
         issues = []
         with open(filename, "rb") as f:
             if filename.endswith(".wow-song") or filename.endswith(".wsg"):
                 try:
                     song = Song.parse(f.read())
                     for lint in SONG_LINTS:
-                        if lint.severity >= minSeverity:
+                        if lint.severity >= self.minSeverity:
                             issues += lint.validate(song)
                 except ConstructError as e:
                     Issue(Severity.FATAL, filename, "{} Not a valid Words of Worship song file".format(e.__class__.__name__)).add_to(issues)

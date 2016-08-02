@@ -13,16 +13,15 @@ def main():
     parser.add_argument('-l', '--list', action='store_true', help='Only list files, not error details')
     args = parser.parse_args()
 
-    linter = Linter()
+    linter = Linter(Severity.ERROR if args.errors_only else None)
 
     longestFileName = 0
 
-    minSeverity = Severity.ERROR if args.errors_only else None
     highestSeverityEncountered = None
 
     for subject in args.file:
         if os.path.isfile(subject):
-            issues = linter.lint(subject, minSeverity)
+            issues = linter.lint(subject)
             if len(issues) > 0:
                 highestSeverityEncountered = max(max(map(lambda i: i.severity, issues), highestSeverityEncountered))
                 longestFileName = max(longestFileName, len(subject))
