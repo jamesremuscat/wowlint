@@ -2,6 +2,7 @@ from StringIO import StringIO
 from unittest.case import TestCase
 
 from wowlint.command import wowlint, getArgumentsParser
+from wowlint.tests.utils import getTestFilePath
 
 
 class TestCommand(TestCase):
@@ -22,40 +23,44 @@ class TestCommand(TestCase):
         stream.close()
 
     def testNormalUsage(self):
-        expected = """src/wowlint/tests/data/TestCommand.wsg  : ERROR    HasNoCopyright No copyright details provided
-src/wowlint/tests/data/TestCommand.wsg  : WARNING  TrailingComma (0:0) Line has trailing comma
+        path = getTestFilePath("TestCommand.wsg")
+        expected = """{path}  : ERROR    HasNoCopyright No copyright details provided
+{path}  : WARNING  TrailingComma (0:0) Line has trailing comma
 1 file, 1 failed, 1 error, 1 warning
-"""
+""".format(path=path)
         self.runCommand(
-            ["src/wowlint/tests/data/TestCommand.wsg"],
+            [path],
             expected,
             1
         )
 
     def testList(self):
-        expected = "src/wowlint/tests/data/TestCommand.wsg\n"
+        path = getTestFilePath("TestCommand.wsg")
+        expected = "{path}\n".format(path=path)
         self.runCommand(
-            ["-l", "src/wowlint/tests/data/TestCommand.wsg"],
+            ["-l", path],
             expected,
             1
         )
 
     def testErrorsOnly(self):
-        expected = """src/wowlint/tests/data/TestCommand.wsg  : ERROR    HasNoCopyright No copyright details provided
+        path = getTestFilePath("TestCommand.wsg")
+        expected = """{path}  : ERROR    HasNoCopyright No copyright details provided
 1 file, 1 failed, 1 error
-"""
+""".format(path=path)
         self.runCommand(
-            ["-e", "src/wowlint/tests/data/TestCommand.wsg"],
+            ["-e", path],
             expected,
             1
         )
 
     def testNoSummary(self):
-        expected = """src/wowlint/tests/data/TestCommand.wsg  : ERROR    HasNoCopyright No copyright details provided
-src/wowlint/tests/data/TestCommand.wsg  : WARNING  TrailingComma (0:0) Line has trailing comma
-"""
+        path = getTestFilePath("TestCommand.wsg")
+        expected = """{path}  : ERROR    HasNoCopyright No copyright details provided
+{path}  : WARNING  TrailingComma (0:0) Line has trailing comma
+""".format(path=path)
         self.runCommand(
-            ["-S", "src/wowlint/tests/data/TestCommand.wsg"],
+            ["-S", path],
             expected,
             1
         )
