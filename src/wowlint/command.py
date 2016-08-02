@@ -26,7 +26,8 @@ def main():
         if os.path.isfile(subject):
             subjectIssues = linter.lint(subject, minSeverity)
             issues += subjectIssues
-            highestSeverityEncountered = max(map(lambda i: i.severity, subjectIssues), highestSeverityEncountered)[0]
+            if len(subjectIssues) > 0:
+                highestSeverityEncountered = max(max(map(lambda i: i.severity, subjectIssues), highestSeverityEncountered))
             longestFileName = max(longestFileName, len(subject))
 
     if args.list:
