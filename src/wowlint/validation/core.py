@@ -32,6 +32,15 @@ class Severity(Enum):
 
 
 class Lint(object):
+    def validate(self, filename, resource):
+        result = self.validate_resource(filename, resource)
+        if result is None:
+            return []
+        return result
+
+    def validate_resource(self, filename, resource):
+        pass
+
     def create_issue(self, filename, block=0, line=0):
         return Issue(self.severity, filename, "{} {}".format(self.__class__.__name__, self.message.format(block=block, line=line)))
 
