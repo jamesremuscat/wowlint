@@ -74,7 +74,7 @@ def wowlint(args, stream=sys.stdout):
             )
 
     if highestSeverityEncountered >= Severity.ERROR:
-        sys.exit(1)
+        return 1
 
 
 def getArgumentsParser():
@@ -88,7 +88,8 @@ def getArgumentsParser():
 
 def main():
     args = getArgumentsParser().parse_args()
-    wowlint(args, sys.stdout)
+    retVal = wowlint(args, sys.stdout)
+    sys.exit(retVal)
 
 
 if __name__ == "__main__":
