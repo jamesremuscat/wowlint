@@ -1,12 +1,7 @@
-import os
 import unittest
 
+from wowlint.tests.utils import getTestFile
 from wowlint.wowfile import Song, LicenseType, BlockType, LineType
-
-
-def getTestFile(filename):
-    path = os.path.join(os.path.dirname(__file__), "data", filename)
-    return open(path, "rb")
 
 
 class TestSongFile(unittest.TestCase):
