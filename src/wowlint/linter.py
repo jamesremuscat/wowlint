@@ -10,7 +10,6 @@ from wowlint.wowfile import Song
 class Linter(object):
     def __init__(self, minSeverity=None, config={}):
         self.minSeverity = minSeverity
-        self.config = config
 
         self.songLints = map(lambda l: l(config.get(l.__name__, {})), SONG_LINT_CLASSES)
 
@@ -30,8 +29,6 @@ class Linter(object):
         return issues
 
     def _shouldLintFile(self, lint, filename):
-        if lint.__class__.__name__ in self.config:
-            lintConfig = self.config[lint.__class__.__name__]
-            if "exclude" in lintConfig and filename in lintConfig["exclude"]:
-                return False
+        if "exclude" in lint.config and filename in lint.config["exclude"]:
+            return False
         return True
