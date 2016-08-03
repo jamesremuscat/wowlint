@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from enchant.checker import SpellChecker
 import enchant
 
@@ -84,6 +85,14 @@ class NoInitialCapital(LinewiseLint):
             return [self.create_issue(blockIndex, lineIndex)]
 
 
+def unSmartQuote(sillyString):
+    return sillyString.\
+        replace(u"’", "'").\
+        replace(u"‘", "'").\
+        replace(u"“", '"').\
+        replace(u"”", '"')
+
+
 class SpellCheck(LinewiseLint):
     def __init__(self):
         self.message = u"({block}:{line}) Word is incorrectly spelt: '{word}'"
@@ -92,7 +101,7 @@ class SpellCheck(LinewiseLint):
 
     def validate_line(self, blockIndex, lineIndex, line):
         issues = []
-        self.checker.set_text(line.text)
+        self.checker.set_text(unSmartQuote(line.text))
         for err in self.checker:
             issues.append(self.create_issue(blockIndex, lineIndex, word=err.word))
         return issues
