@@ -43,12 +43,12 @@ def wowlint(args, stream=sys.stdout):
                 else:
                     for issue in issues:
                         print (
-                            "{:{width}}: {:8} {}".format(
+                            u"{:{width}}: {:8} {}".format(
                                 subject,
                                 issue.severity,
                                 issue.message,
                                 width=longestFileName + 2
-                            ),
+                            ).encode('utf-8'),
                             file=stream
                         )
 

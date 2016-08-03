@@ -41,8 +41,8 @@ class Lint(object):
     def validate_resource(self, resource):
         pass
 
-    def create_issue(self, block=0, line=0):
-        return Issue(self.severity, "{} {}".format(self.__class__.__name__, self.message.format(block=block, line=line)))
+    def create_issue(self, block=0, line=0, **kwargs):
+        return Issue(self.severity, u"{} {}".format(self.__class__.__name__, self.message.format(block=block, line=line, **kwargs)))
 
 
 class Issue(object):
