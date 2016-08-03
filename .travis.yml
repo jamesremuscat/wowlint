@@ -9,3 +9,12 @@ script:
   - coverage run --source=wowlint setup.py nosetests
 after_success:
   coveralls
+before_deploy:
+  - sed -i -e "s/\.dev//" setup.cfg
+deploy:
+  provider: pypi
+  user: 'jamesremuscat'
+  password:
+    secure: GobaTOS43OMJWRxRJUxA0cIJeMJSdXrpVDSFgE65Y1koa+zEVvVt0nvm7NGCvjEv2ceep6P+y2wOJLM/7QWLq8tLBpEt552Am2QvAuIRNyk8KPXUutWRjwd86yYlfQsH0ucXyw03eXLlct5YLAGXz8piaVBos/W5qD+Peka/Rb+uIoAfMJk4/fQwrKenqOhLCbpHTI6yqEJDR1t3kLwo6wNdTyXkTSqcYWQqVf3AH73jbU/o2hnloi+oTt68rwfalM2i5tEKkTqwCNHYZKMtODX6vBvNFuC/Vs5pveNorL+mmZDMRvZJ3W7vRM4Vr91UT117OGpc/hyRbBHZVQfdYw1IWzPosXcBFSjCQt0nQGnEC9lyydl+8esRrVOrYM9iOoKlBhIl0I7sZwL+sx/18cUrCK2Q0mRyd0RcUryrGL+Wq9oYBoZ3GeneZc+bbcpIMAgQi7SESGmyh8t4RMFN7/nKRuh3mVZZ53/7cZuUU/01HZoCXEZVf33R2Pdz/mPr+8HntqFy/e+t167wiJkD7zhEgT/blb/Q/jAzgF6g37Fs9CJbNJ655/T9gECKhKvVHQf7NodxwBeO3uoO4qnmk2rCd5bEjI+Ry175u/PM/3ERJh/30Rrs4GgwkE6WKWzn3UdULCHQ+pBJk9mIxgCbycF/O9VPEshjq4VehA+H2HY=
+  on:
+    tags: true
