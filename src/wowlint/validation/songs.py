@@ -1,9 +1,7 @@
-import string
-
-from enchant.errors import Error
+from enchant.checker import SpellChecker
 import enchant
 
-from wowlint.validation.core import Severity, Lint, Issue
+from wowlint.validation.core import Severity, Lint
 from wowlint.wowfile import LicenseType, LineType
 
 
@@ -90,14 +88,13 @@ class SpellCheck(LinewiseLint):
     def __init__(self):
         self.message = u"({block}:{line}) Word is incorrectly spelt: '{word}'"
         self.severity = Severity.WARNING
-        self.dict = enchant.DictWithPWL('en_GB', 'custom.dict')
+        self.checker = SpellChecker(enchant.DictWithPWL('en_GB', 'custom.dict'))
 
     def validate_line(self, blockIndex, lineIndex, line):
         issues = []
-        words = [word.strip(string.punctuation) for word in line.text.split()]
-        for word in words:
-            if len(word) > 0 and not self.dict.check(word):
-                issues.append(self.create_issue(blockIndex, lineIndex, word=word))
+        self.checker.set_text(line.text)
+        for err in self.checker:
+            issues.append(self.create_issue(blockIndex, lineIndex, word=err.word))
         return issues
 
 
