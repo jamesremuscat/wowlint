@@ -1,14 +1,14 @@
-# wowlinter
+# wowlint
 ## Linter for Words of Worship resource files
 
-[![Build Status](https://travis-ci.org/jamesremuscat/wowlinter.svg?branch=master)](https://travis-ci.org/jamesremuscat/wowlinter)
-[![Coverage Status](https://coveralls.io/repos/github/jamesremuscat/wowlinter/badge.svg?branch=master)](https://coveralls.io/github/jamesremuscat/wowlinter?branch=master)
+[![Build Status](https://travis-ci.org/jamesremuscat/wowlint.svg?branch=master)](https://travis-ci.org/jamesremuscat/wowlint)
+[![Coverage Status](https://coveralls.io/repos/github/jamesremuscat/wowlint/badge.svg?branch=master)](https://coveralls.io/github/jamesremuscat/wowlint?branch=master)
 
 [Words of Worship](http://www.wordsofworship.com) is a popular tool for
 projecting song lyrics, liturgy and other textual media in churches and houses
 of worship.
 
-`wowlinter` aims to provide a mechanism to assure quality and consistency of
+`wowlint` aims to provide a mechanism to assure quality and consistency of
 the song and liturgy resource files, by automatically verifying things like:
 
  - Lines start with a capital letter
