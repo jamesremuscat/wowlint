@@ -8,8 +8,9 @@ from wowlint.wowfile import Song
 
 
 class Linter(object):
-    def __init__(self, minSeverity=None):
+    def __init__(self, minSeverity=None, config={}):
         self.minSeverity = minSeverity
+        self.config = config
 
     def lint(self, filename):
         issues = []
@@ -18,6 +19,10 @@ class Linter(object):
                 try:
                     song = Song.parse(f.read())
                     for lint in SONG_LINTS:
+                        if lint.__class__.__name__ in self.config:
+                            lintConfig = self.config[lint.__class__.__name__]
+                            if "exclude" in lintConfig and filename in lintConfig["exclude"]:
+                                continue
                         if lint.severity >= self.minSeverity:
                             issues += lint.validate(song)
                 except ConstructError as e:
