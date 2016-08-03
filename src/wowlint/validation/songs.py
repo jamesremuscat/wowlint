@@ -1,4 +1,9 @@
-from wowlint.validation.core import Severity, Lint
+import string
+
+from enchant.errors import Error
+import enchant
+
+from wowlint.validation.core import Severity, Lint, Issue
 from wowlint.wowfile import LicenseType, LineType
 
 
@@ -81,10 +86,26 @@ class NoInitialCapital(LinewiseLint):
             return [self.create_issue(blockIndex, lineIndex)]
 
 
+class SpellCheck(LinewiseLint):
+    def __init__(self):
+        self.message = u"({block}:{line}) Word is incorrectly spelt: '{word}'"
+        self.severity = Severity.WARNING
+        self.dict = enchant.DictWithPWL('en_GB', 'custom.dict')
+
+    def validate_line(self, blockIndex, lineIndex, line):
+        issues = []
+        words = [word.strip(string.punctuation) for word in line.text.split()]
+        for word in words:
+            if len(word) > 0 and not self.dict.check(word):
+                issues.append(self.create_issue(blockIndex, lineIndex, word=word))
+        return issues
+
+
 LINTS = [
     HasNoCopyright(),
     HasNoAuthor(),
     TrailingComma(),
     NoInitialCapital(),
-    AllMinorWords()
+    AllMinorWords(),
+    SpellCheck()
 ]
