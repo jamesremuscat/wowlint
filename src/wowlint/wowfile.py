@@ -93,7 +93,7 @@ def valuesOf(enum):
 
 Line = Struct(
     "line",
-    PascalString("text"),
+    PascalString("text", encoding="windows-1252"),
     If(
         lambda ctx: ctx._._.format == 1,  # 0 = Really old WoW format without minor words
         EnumAdapter(LineType, OneOf(UBInt8("type"), valuesOf(LineType))),
@@ -114,18 +114,18 @@ Block = Struct(
 
 Song = Struct(
     "song",
-    OneOf(String("header", 8), ['WoW File']),
+    OneOf(String("header", 8, encoding="windows-1252"), ['WoW File']),
     Padding(1),
-    OneOf(String("filetype", 10), ['Song Words']),
+    OneOf(String("filetype", 10, encoding="windows-1252"), ['Song Words']),
     Padding(5),
     UBInt8("format"),
     Padding(31),
     UBInt8("blockcount"),
     Padding(9),
-    OneOf(String("csongdoc", 14), ['CSongDoc::CBlo']),  # The 'ck' is considered padding at start of block
+    OneOf(String("csongdoc", 14, encoding="windows-1252"), ['CSongDoc::CBlo']),  # The 'ck' is considered padding at start of block
     MetaArray(lambda ctx: ctx.blockcount, Block),
-    PascalString("author"),
-    PascalString("copyright"),
+    PascalString("author", encoding="windows-1252"),
+    PascalString("copyright", encoding="windows-1252"),
     Optional(
         Struct(
             "license",
