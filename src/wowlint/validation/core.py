@@ -32,6 +32,9 @@ class Severity(Enum):
 
 
 class Lint(object):
+    def __init__(self, config={}):
+        self.config = {}
+
     def validate(self, resource):
         result = self.validate_resource(resource)
         if result is None:
