@@ -33,9 +33,8 @@ class LinewiseLint(BlockwiseLint):
 
 
 class HasNoCopyright(Lint):
-    def __init__(self):
-        self.message = "No copyright details provided"
-        self.severity = Severity.ERROR
+    message = "No copyright details provided"
+    severity = Severity.ERROR
 
     def validate_resource(self, song):
         if song.copyright == "" and (not song.license or song.license.type == LicenseType.CCL):
@@ -43,9 +42,8 @@ class HasNoCopyright(Lint):
 
 
 class HasNoAuthor(Lint):
-    def __init__(self):
-        self.message = "No author provided"
-        self.severity = Severity.ERROR
+    message = "No author provided"
+    severity = Severity.ERROR
 
     def validate_resource(self, song):
         if song.author == "":
@@ -53,9 +51,8 @@ class HasNoAuthor(Lint):
 
 
 class AllMinorWords(Lint):
-    def __init__(self):
-        self.message = "Entirely uses minor words"
-        self.severity = Severity.WARNING
+    message = "Entirely uses minor words"
+    severity = Severity.WARNING
 
     def validate_resource(self, song):
         for block in song.block:
@@ -66,9 +63,8 @@ class AllMinorWords(Lint):
 
 
 class TrailingComma(LinewiseLint):
-    def __init__(self):
-        self.message = "({block}:{line}) Line has trailing comma"
-        self.severity = Severity.WARNING
+    message = "({block}:{line}) Line has trailing comma"
+    severity = Severity.WARNING
 
     def validate_line(self, blockIndex, lineIndex, line):
         if line.text.endswith(","):
@@ -76,9 +72,8 @@ class TrailingComma(LinewiseLint):
 
 
 class NoInitialCapital(LinewiseLint):
-    def __init__(self):
-        self.message = "({block}:{line}) Line does not start with a capital letter"
-        self.severity = Severity.WARNING
+    message = "({block}:{line}) Line does not start with a capital letter"
+    severity = Severity.WARNING
 
     def validate_line(self, blockIndex, lineIndex, line):
         if line.text[0] != line.text[0].upper():
@@ -94,9 +89,11 @@ def unSmartQuote(sillyString):
 
 
 class SpellCheck(LinewiseLint):
-    def __init__(self):
-        self.message = u"({block}:{line}) Word is incorrectly spelt: '{word}'"
-        self.severity = Severity.WARNING
+    message = u"({block}:{line}) Word is incorrectly spelt: '{word}'"
+    severity = Severity.WARNING
+
+    def __init__(self, config={}):
+        LinewiseLint.__init__(self, config=config)
         self.checker = SpellChecker(enchant.DictWithPWL('en_GB', 'custom.dict'))
 
     def validate_line(self, blockIndex, lineIndex, line):
@@ -107,11 +104,11 @@ class SpellCheck(LinewiseLint):
         return issues
 
 
-LINTS = [
-    HasNoCopyright(),
-    HasNoAuthor(),
-    TrailingComma(),
-    NoInitialCapital(),
-    AllMinorWords(),
-    SpellCheck()
+LINT_CLASSES = [
+    HasNoCopyright,
+    HasNoAuthor,
+    TrailingComma,
+    NoInitialCapital,
+    AllMinorWords,
+    SpellCheck
 ]

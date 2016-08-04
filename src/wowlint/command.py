@@ -4,6 +4,8 @@ import argparse
 import os
 import sys
 
+import yaml
+
 from wowlint.linter import Linter
 from wowlint.validation.core import Severity
 
@@ -12,8 +14,9 @@ def plural(num):
     return "s" if num != 1 else ""
 
 
-def wowlint(args, stream=sys.stdout):
-    linter = Linter(Severity.ERROR if args.errors_only else None)
+def wowlint(args, stream=sys.stdout, config={}):
+
+    linter = Linter(Severity.ERROR if args.errors_only else None, config)
 
     longestFileName = 0
 
@@ -88,7 +91,12 @@ def getArgumentsParser():
 
 def main():
     args = getArgumentsParser().parse_args()
-    retVal = wowlint(args, sys.stdout)
+    try:
+        with open('wowlintrc.yml', 'r') as confFile:
+            config = yaml.load(confFile)
+    except:
+        config = {}
+    retVal = wowlint(args, sys.stdout, config)
     sys.exit(retVal)
 
 
