@@ -2,6 +2,7 @@ from unittest.case import TestCase
 
 from wowlint.linter import Linter
 from wowlint.tests.utils import getTestFilePath
+from wowlint.validation.core import Severity, Issue
 
 
 class TestLinter(TestCase):
@@ -19,3 +20,13 @@ class TestLinter(TestCase):
         results = linter.lint(testFile)
 
         self.assertEqual([], results)
+
+    def testUnknownFileExtensions(self):
+        linter = Linter()
+        results = linter.lint("unknown.ext")
+        self.assertEqual(
+            [
+                Issue(Severity.INFO, "Unrecognised file extension: .ext")
+            ],
+            results
+        )
