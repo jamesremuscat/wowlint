@@ -122,9 +122,6 @@ Block = Struct(
 
 Song = Struct(
     "song",
-    Padding(4),
-    UBInt8("format"),
-    Padding(31),
     UBInt8("blockcount"),
     Padding(9),
     Magic('CSongDoc::CBlo'),  # The 'ck' is considered padding at start of block
@@ -142,9 +139,6 @@ Song = Struct(
 
 Liturgy = Struct(
     'liturgy',
-    Padding(4),
-    UBInt8("format"),
-    Padding(31),
     UBInt8("linecount"),
     Padding(3),
     MetaArray(lambda ctx: ctx.linecount, Line)
@@ -159,6 +153,9 @@ Resource = Struct(
     "resource",
     Magic("WoW File\n"),
     OneOf(CString("filetype", encoding="windows-1252", terminators="\x00\n"), RESOURCE_MAPPING.keys()),
+    Padding(4),
+    UBInt8("format"),
+    Padding(31),
     Switch(
         "content",
         lambda ctx: ctx.filetype,
