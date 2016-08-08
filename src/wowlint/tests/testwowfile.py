@@ -32,3 +32,21 @@ class TestSongFile(unittest.TestCase):
 
             self.assertEqual(BlockType.CHORUS, song.content.block[1].type)
             self.assertEqual(BlockType.BRIDGE, song.content.block[2].type)
+
+    def testParseLiturgyFile(self):
+        with getTestFile("test.wlt") as f:
+            lit = Resource.parse(f.read())
+
+            self.assertEqual("Liturgy", lit.filetype)
+            self.assertEqual(4, lit.content.linecount)
+
+            line1 = lit.content.line[0]
+            self.assertEqual(LineType.NORMAL, line1.type)
+            self.assertEqual("Test liturgy first line major", line1.text)
+
+            line2 = lit.content.line[1]
+            self.assertEqual(LineType.MINOR, line2.type)
+            self.assertEqual("Test liturgy second line minor", line2.text)
+
+            line3 = lit.content.line[2]
+            self.assertEqual("", line3.text)

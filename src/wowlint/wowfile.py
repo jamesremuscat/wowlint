@@ -1,6 +1,7 @@
 import sys
 
 from construct import CString, Adapter, If, Magic, MetaArray, OneOf, Optional, Padding, PascalString, Struct, Switch, UBInt8
+from construct.debug import Probe
 from enum import Enum
 
 
@@ -90,11 +91,18 @@ def valuesOf(enum):
     return map(lambda x: x.value, enum)
 
 
+def findFormat(ctx):
+    if 'format' in ctx:
+        return ctx.format
+    if '_' in ctx:
+        return findFormat(ctx._)
+    return 0
+
 Line = Struct(
     "line",
     PascalString("text", encoding="windows-1252"),
     If(
-        lambda ctx: ctx._._.format == 1,  # 0 = Really old WoW format without minor words
+        lambda ctx: findFormat(ctx) == 1,  # 0 = Really old WoW format without minor words
         EnumAdapter(LineType, OneOf(UBInt8("type"), valuesOf(LineType))),
         LineType.NORMAL
     )
@@ -106,6 +114,7 @@ Block = Struct(
     Padding(2),
     UBInt8("linecount"),
     Padding(3),
+    Probe(),
     MetaArray(lambda ctx: ctx.linecount, Line),
     EnumAdapter(BlockType, OneOf(UBInt8("type"), valuesOf(BlockType))),
     Padding(3)
@@ -131,8 +140,19 @@ Song = Struct(
     )
 )
 
+Liturgy = Struct(
+    'liturgy',
+    Padding(4),
+    UBInt8("format"),
+    Padding(31),
+    UBInt8("linecount"),
+    Padding(3),
+    MetaArray(lambda ctx: ctx.linecount, Line)
+)
+
 RESOURCE_MAPPING = {
-    'Song Words': Song
+    'Song Words': Song,
+    'Liturgy': Liturgy
 }
 
 Resource = Struct(
