@@ -1,6 +1,6 @@
 import sys
 
-from construct import CString, Adapter, If, MetaArray, OneOf, Optional, Padding, PascalString, String, Struct, Switch, UBInt8
+from construct import CString, Adapter, If, Magic, MetaArray, OneOf, Optional, Padding, PascalString, Struct, Switch, UBInt8
 from enum import Enum
 
 
@@ -118,7 +118,7 @@ Song = Struct(
     Padding(31),
     UBInt8("blockcount"),
     Padding(9),
-    OneOf(String("csongdoc", 14, encoding="windows-1252"), ['CSongDoc::CBlo']),  # The 'ck' is considered padding at start of block
+    Magic('CSongDoc::CBlo'),  # The 'ck' is considered padding at start of block
     MetaArray(lambda ctx: ctx.blockcount, Block),
     PascalString("author", encoding="windows-1252"),
     PascalString("copyright", encoding="windows-1252"),
@@ -133,7 +133,7 @@ Song = Struct(
 
 Resource = Struct(
     "resource",
-    OneOf(CString("header", encoding="windows-1252", terminators="\x00\n"), ['WoW File']),
+    Magic("WoW File\n"),
     OneOf(CString("filetype", encoding="windows-1252", terminators="\x00\n"), ['Song Words']),
     Switch(
         "content",
