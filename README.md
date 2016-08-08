@@ -29,13 +29,28 @@ For help with options, run:
 $ wowlint --help
 ```
 
+## Configuration
+
+Per-lint configuration is possible by creating a `wowlintrc.yml` file in the
+directory from which you run `wowlint`. This should be a YAML file with lint
+names as keys and per-lint configuration as values.
+
+All lints accept the `exclude` key, which should be a list of filenames to be
+excluded from that lint. For example, to exclude the `test.wsg` file from the
+`NoAuthorProvided` lint, your `wowlintrc.yml` should contain:
+
+```yaml
+NoAuthorProvided:
+  exclude:
+    - "test.wsg"
+```
+
 ## Limitations
 
 Currently this project is very young, and:
  - Only song files (`.wsg` and `.wow-song`) are supported
- - There's no way to specify custom validation or disable existing rules
+ - There's no way to specify custom validation or disable entire rules
  - Automating the running of `wowlint` is left as an exercise for the user
- - Validation is limited
 
 # Contributions
 
