@@ -47,7 +47,7 @@ def wowlint(args, stream=sys.stdout, config={}):
                     for issue in issues:
                         print (
                             u"{:{width}}: {:8} {}".format(
-                                subject,
+                                subject.decode('utf-8'),
                                 issue.severity,
                                 issue.message,
                                 width=longestFileName + 2
