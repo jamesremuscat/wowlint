@@ -94,7 +94,7 @@ class SpellCheck(LinewiseLint):
 
     def __init__(self, config={}):
         LinewiseLint.__init__(self, config=config)
-        self.checker = SpellChecker(enchant.DictWithPWL('en_GB', 'custom.dict'))
+        self.checker = SpellChecker(enchant.DictWithPWL(config.get('lang', 'en_GB'), 'custom.dict'))
 
     def validate_line(self, blockIndex, lineIndex, line):
         issues = []
