@@ -51,6 +51,38 @@ NoAuthorProvided:
     - "test.wsg"
 ```
 
+## Advanced usage
+
+It's possible to use `wowlint` as a WoW-to-text converter by dumping the
+internal representation of a WoW song to stdout, by running:
+
+```shell
+$ python -m wowlint.wowfile [filename]
+```
+Note that this currently only works with song resource files.
+
+### git diff
+
+It's therefore possible to configure `git` to display a diff of the binary WoW
+file format!
+
+You'll need to add the following to `.gitattributes`:
+
+```
+*.wsg diff=wow
+*.wow-song diff=wow
+```
+
+Then you can configure `git` with the following:
+
+```shell
+$ git config --local diff.wow.textconv "python -m wowlint.wowfile"
+```
+
+Note that due to security implications, the latter must be run for each clone
+of your song files repository; you can't commit it, as you can with
+`.gitattributes`.
+
 ## Limitations
 
 Currently this project is very young, and:
