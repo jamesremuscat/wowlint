@@ -29,6 +29,12 @@ For help with options, run:
 $ wowlint --help
 ```
 
+### Runtime options
+
+* **-e**, **--errors-only**: Just show errors, don't run lints that give warnings.
+* **-l**, **--list**: Just list files that fail validation, not the details. Implies `-S`.
+* **-S**, **--no-summary**: Don't show a summary (number of files, errors, etc) at the end of the output.
+
 ## Configuration
 
 Per-lint configuration is possible by creating a `wowlintrc.yml` file in the
