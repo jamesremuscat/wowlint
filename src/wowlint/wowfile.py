@@ -1,7 +1,6 @@
 import sys
 
-from construct import If, MetaArray, OneOf, Optional, Padding, PascalString, String, Struct, UBInt8
-from construct.core import Adapter
+from construct import CString, Adapter, If, MetaArray, OneOf, Optional, Padding, PascalString, String, Struct, UBInt8
 from enum import Enum
 
 
@@ -114,10 +113,9 @@ Block = Struct(
 
 Song = Struct(
     "song",
-    OneOf(String("header", 8, encoding="windows-1252"), ['WoW File']),
-    Padding(1),
-    OneOf(String("filetype", 10, encoding="windows-1252"), ['Song Words']),
-    Padding(5),
+    OneOf(CString("header", encoding="windows-1252", terminators="\x00\n"), ['WoW File']),
+    OneOf(CString("filetype", encoding="windows-1252", terminators="\x00\n"), ['Song Words']),
+    Padding(4),
     UBInt8("format"),
     Padding(31),
     UBInt8("blockcount"),
