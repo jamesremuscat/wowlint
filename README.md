@@ -51,6 +51,13 @@ NoAuthorProvided:
     - "test.wsg"
 ```
 
+### Per-lint configuration options
+
+#### SpellCheck
+* **lang**: Language to use for spell-checking. Must refer to an available
+  dictionary on your system (e.g. `aspell` on Linux via `enchant`). Defaults to
+  `en_GB`.
+
 ## Advanced usage
 
 It's possible to use `wowlint` as a WoW-to-text converter by dumping the
