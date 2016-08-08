@@ -1,6 +1,6 @@
 import sys
 
-from construct import CString, Adapter, If, MetaArray, OneOf, Optional, Padding, PascalString, String, Struct, UBInt8
+from construct import CString, Adapter, If, MetaArray, OneOf, Optional, Padding, PascalString, String, Struct, Switch, UBInt8
 from enum import Enum
 
 
@@ -113,8 +113,6 @@ Block = Struct(
 
 Song = Struct(
     "song",
-    OneOf(CString("header", encoding="windows-1252", terminators="\x00\n"), ['WoW File']),
-    OneOf(CString("filetype", encoding="windows-1252", terminators="\x00\n"), ['Song Words']),
     Padding(4),
     UBInt8("format"),
     Padding(31),
@@ -133,8 +131,21 @@ Song = Struct(
     )
 )
 
+Resource = Struct(
+    "resource",
+    OneOf(CString("header", encoding="windows-1252", terminators="\x00\n"), ['WoW File']),
+    OneOf(CString("filetype", encoding="windows-1252", terminators="\x00\n"), ['Song Words']),
+    Switch(
+        "content",
+        lambda ctx: ctx.filetype,
+        {
+            'Song Words': Song
+        }
+    )
+)
+
 
 if __name__ == "__main__":
     filename = sys.argv[1]
     with open(filename, "rb") as f:
-        print Song.parse(f.read())
+        print Resource.parse(f.read())

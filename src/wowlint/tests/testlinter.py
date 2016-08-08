@@ -21,9 +21,9 @@ class TestLinter(TestCase):
 
         self.assertEqual([], results)
 
-    def testUnknownFileExtensions(self):
+    def testUnknownFileExtension(self):
         linter = Linter()
-        results = linter.lint("unknown.ext")
+        results = linter.lint(getTestFilePath("unknown.ext"))
         self.assertEqual(
             [
                 Issue(Severity.INFO, "Unrecognised file extension: .ext")

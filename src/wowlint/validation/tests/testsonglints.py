@@ -3,14 +3,14 @@ from unittest.case import TestCase
 from wowlint.tests.utils import getTestFile
 from wowlint.validation.core import Severity, Issue
 from wowlint.validation.songs import HasNoCopyright, HasNoAuthor, AllMinorWords, NoInitialCapital, TrailingComma
-from wowlint.wowfile import Song
+from wowlint.wowfile import Resource
 
 
 class TestSongLints(TestCase):
 
     def runTest(self, clazz, testFile, expected):
         with getTestFile(testFile, __file__) as songFile:
-            results = clazz().validate(Song.parse(songFile.read()))
+            results = clazz().validate(Resource.parse(songFile.read()))
 
             self.assertEqual(expected, results)
 

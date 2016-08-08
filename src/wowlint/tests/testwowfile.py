@@ -1,23 +1,25 @@
 import unittest
 
 from wowlint.tests.utils import getTestFile
-from wowlint.wowfile import Song, LicenseType, BlockType, LineType
+from wowlint.wowfile import LicenseType, BlockType, LineType, Resource
 
 
 class TestSongFile(unittest.TestCase):
 
     def testParseSongFile(self):
         with getTestFile("test.wsg") as f:
-            song = Song.parse(f.read())
+            song = Resource.parse(f.read())
 
-            self.assertEqual(3, song.blockcount)
-            self.assertEqual("Test Author", song.author)
-            self.assertEqual("Test Copyright", song.copyright)
-            self.assertEqual(LicenseType.CCL, song.license.type)
+            self.assertEqual("Song Words", song.filetype)
 
-            self.assertEqual(3, len(song.block))
+            self.assertEqual(3, song.content.blockcount)
+            self.assertEqual("Test Author", song.content.author)
+            self.assertEqual("Test Copyright", song.content.copyright)
+            self.assertEqual(LicenseType.CCL, song.content.license.type)
 
-            verse1 = song.block[0]
+            self.assertEqual(3, len(song.content.block))
+
+            verse1 = song.content.block[0]
             self.assertEqual(BlockType.VERSE, verse1.type)
 
             firstLine = verse1.line[0]
@@ -28,5 +30,5 @@ class TestSongFile(unittest.TestCase):
             self.assertEqual("Test song, first verse, second line minor", secondLine.text)
             self.assertEqual(LineType.MINOR, secondLine.type)
 
-            self.assertEqual(BlockType.CHORUS, song.block[1].type)
-            self.assertEqual(BlockType.BRIDGE, song.block[2].type)
+            self.assertEqual(BlockType.CHORUS, song.content.block[1].type)
+            self.assertEqual(BlockType.BRIDGE, song.content.block[2].type)

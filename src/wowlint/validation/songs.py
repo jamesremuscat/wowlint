@@ -9,7 +9,7 @@ from wowlint.wowfile import LicenseType, LineType
 class BlockwiseLint(Lint):
     def validate_resource(self, song):
         issues = []
-        for idx, block in enumerate(song.block):
+        for idx, block in enumerate(song.content.block):
             blockIssues = self.validate_block(idx, block)
             if blockIssues:
                 issues += blockIssues
@@ -37,7 +37,7 @@ class HasNoCopyright(Lint):
     severity = Severity.ERROR
 
     def validate_resource(self, song):
-        if song.copyright == "" and (not song.license or song.license.type == LicenseType.CCL):
+        if song.content.copyright == "" and (not song.content.license or song.content.license.type == LicenseType.CCL):
             return [self.create_issue()]
 
 
@@ -46,7 +46,7 @@ class HasNoAuthor(Lint):
     severity = Severity.ERROR
 
     def validate_resource(self, song):
-        if song.author == "":
+        if song.content.author == "":
             return [self.create_issue()]
 
 
@@ -55,7 +55,7 @@ class AllMinorWords(Lint):
     severity = Severity.WARNING
 
     def validate_resource(self, song):
-        for block in song.block:
+        for block in song.content.block:
             for line in block.line:
                 if line.type == LineType.NORMAL:
                     return None
