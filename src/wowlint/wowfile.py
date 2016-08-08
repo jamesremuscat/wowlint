@@ -131,16 +131,18 @@ Song = Struct(
     )
 )
 
+RESOURCE_MAPPING = {
+    'Song Words': Song
+}
+
 Resource = Struct(
     "resource",
     Magic("WoW File\n"),
-    OneOf(CString("filetype", encoding="windows-1252", terminators="\x00\n"), ['Song Words']),
+    OneOf(CString("filetype", encoding="windows-1252", terminators="\x00\n"), RESOURCE_MAPPING.keys()),
     Switch(
         "content",
         lambda ctx: ctx.filetype,
-        {
-            'Song Words': Song
-        }
+        RESOURCE_MAPPING
     )
 )
 
