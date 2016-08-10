@@ -1,7 +1,6 @@
 import sys
 
 from construct import CString, Adapter, If, Magic, MetaArray, OneOf, Optional, Padding, PascalString, Struct, Switch, UBInt8
-from construct.debug import Probe
 from enum import Enum
 
 
@@ -114,7 +113,6 @@ Block = Struct(
     Padding(2),
     UBInt8("linecount"),
     Padding(3),
-    Probe(),
     MetaArray(lambda ctx: ctx.linecount, Line),
     EnumAdapter(BlockType, OneOf(UBInt8("type"), valuesOf(BlockType))),
     Padding(3)
