@@ -1,35 +1,5 @@
-# -*- coding: utf-8 -*-
-from enchant.checker import SpellChecker
-import enchant
-
-from wowlint.validation.core import Severity, Lint
+from wowlint.validation.core import Severity, Lint, LinewiseLint
 from wowlint.wowfile import LicenseType, LineType
-
-
-class BlockwiseLint(Lint):
-    def validate_resource(self, song):
-        issues = []
-        for idx, block in enumerate(song.content.block):
-            blockIssues = self.validate_block(idx, block)
-            if blockIssues:
-                issues += blockIssues
-        return issues
-
-    def validate_block(self, blockIndex, block):
-        pass
-
-
-class LinewiseLint(BlockwiseLint):
-    def validate_block(self, blockIndex, block):
-        issues = []
-        for idx, line in enumerate(block.line):
-            lineIssues = self.validate_line(blockIndex, idx, line)
-            if lineIssues:
-                issues += lineIssues
-        return issues
-
-    def validate_line(self, blockIndex, lineIndex, line):
-        pass
 
 
 class HasNoCopyright(Lint):
@@ -80,35 +50,10 @@ class NoInitialCapital(LinewiseLint):
             return [self.create_issue(blockIndex, lineIndex)]
 
 
-def unSmartQuote(sillyString):
-    return sillyString.\
-        replace(u"’", "'").\
-        replace(u"‘", "'").\
-        replace(u"“", '"').\
-        replace(u"”", '"')
-
-
-class SpellCheck(LinewiseLint):
-    message = u"({block}:{line}) Word is incorrectly spelt: '{word}'"
-    severity = Severity.WARNING
-
-    def __init__(self, config={}):
-        LinewiseLint.__init__(self, config=config)
-        self.checker = SpellChecker(enchant.DictWithPWL(config.get('lang', 'en_GB'), 'custom.dict'))
-
-    def validate_line(self, blockIndex, lineIndex, line):
-        issues = []
-        self.checker.set_text(unSmartQuote(line.text))
-        for err in self.checker:
-            issues.append(self.create_issue(blockIndex, lineIndex, word=err.word))
-        return issues
-
-
 LINT_CLASSES = [
     HasNoCopyright,
     HasNoAuthor,
     TrailingComma,
     NoInitialCapital,
-    AllMinorWords,
-    SpellCheck
+    AllMinorWords
 ]

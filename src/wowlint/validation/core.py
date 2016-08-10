@@ -48,6 +48,35 @@ class Lint(object):
         return Issue(self.severity, u"{} {}".format(self.__class__.__name__, self.message.format(block=block, line=line, **kwargs)))
 
 
+class BlockwiseLint(Lint):
+    def validate_resource(self, resource):
+        issues = []
+        if 'block' in resource.content:
+            for idx, block in enumerate(resource.content.block):
+                blockIssues = self.validate_block(idx, block)
+                if blockIssues:
+                    issues += blockIssues
+        else:
+            issues += self.validate_block(-1, resource.content)
+        return issues
+
+    def validate_block(self, blockIndex, block):
+        pass
+
+
+class LinewiseLint(BlockwiseLint):
+    def validate_block(self, blockIndex, block):
+        issues = []
+        for idx, line in enumerate(block.line):
+            lineIssues = self.validate_line(blockIndex, idx, line)
+            if lineIssues:
+                issues += lineIssues
+        return issues
+
+    def validate_line(self, blockIndex, lineIndex, line):
+        pass
+
+
 class Issue(object):
     def __init__(self, severity, message):
         self.severity = severity
