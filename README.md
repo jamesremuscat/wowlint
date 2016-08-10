@@ -53,10 +53,17 @@ NoAuthorProvided:
 
 ### Per-lint configuration options
 
+#### LineTooLong
+Words of Worship has trouble displaying very long lines of text if, when
+the line is wrapped, it occupies more lines than are visible on the screen.
+A "safe" line length therefore depends on your display settings.
+
+* **max_length**: Maximum line length. Defaults to 200.
+
 #### SpellCheck
 * **lang**: Language to use for spell-checking. Must refer to an available
-  dictionary on your system (e.g. `aspell` on Linux via `enchant`). Defaults to
-  `en_GB`.
+  dictionary on your system (e.g. on Linux, a dictionary that can be used by
+  `aspell` via `enchant`). Defaults to `en_GB`.
 
 ## Advanced usage
 

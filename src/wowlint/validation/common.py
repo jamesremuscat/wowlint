@@ -29,6 +29,21 @@ class SpellCheck(LinewiseLint):
         return issues
 
 
+class LineTooLong(LinewiseLint):
+    message = "({block}:{line}) Line too long ({len} characters)"
+    severity = Severity.WARNING
+
+    def __init__(self, config={}):
+        LinewiseLint.__init__(self, config=config)
+        self.LINE_LENGTH_LIMIT = config.get('max_length', 200)
+
+    def validate_line(self, blockIndex, lineIndex, line):
+        lineLength = len(line.text)
+        if lineLength > self.LINE_LENGTH_LIMIT:
+            return [self.create_issue(blockIndex, lineIndex, len=lineLength)]
+
+
 LINT_CLASSES = [
+    LineTooLong,
     SpellCheck
 ]
