@@ -9,7 +9,7 @@ from wowlint.wowfile import Resource
 
 class Linter(object):
 
-    KNOWN_EXTENSIONS = ['.wsg', '.wow-song']
+    KNOWN_EXTENSIONS = ['.wsg', '.wow-song', '.wlt', '.wow-liturgy']
 
     def __init__(self, minSeverity=None, config={}):
         self.minSeverity = minSeverity
