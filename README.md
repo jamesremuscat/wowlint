@@ -68,12 +68,12 @@ A "safe" line length therefore depends on your display settings.
 ## Advanced usage
 
 It's possible to use `wowlint` as a WoW-to-text converter by dumping the
-internal representation of a WoW song to stdout, by running:
+internal representation of a WoW file to stdout, by running:
 
 ```shell
 $ python -m wowlint.wowfile [filename]
 ```
-Note that this currently only works with song resource files.
+Note that this currently only works with song and liturgy resource files.
 
 ### git diff
 
@@ -100,7 +100,8 @@ of your song files repository; you can't commit it, as you can with
 ## Limitations
 
 Currently this project is very young, and:
- - Only song files (`.wsg` and `.wow-song`) are supported
+ - Only song files (`.wsg` and `.wow-song`) and liturgy files (`.wlt` and
+   `.wow-liturgy`) are supported
  - There's no way to specify custom validation or disable entire rules
  - Automating the running of `wowlint` is left as an exercise for the user
 
