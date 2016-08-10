@@ -3,6 +3,7 @@ import os
 from construct.core import ConstructError
 
 from wowlint.validation.core import Severity, Issue
+from wowlint.validation.liturgy import LINT_CLASSES as LITURGY_LINT_CLASSES
 from wowlint.validation.songs import LINT_CLASSES as SONG_LINT_CLASSES
 from wowlint.wowfile import Resource
 
@@ -15,7 +16,8 @@ class Linter(object):
         self.minSeverity = minSeverity
 
         self.lints = {
-            'Song Words': map(lambda l: l(config.get(l.__name__, {})), SONG_LINT_CLASSES)
+            'Song Words': map(lambda l: l(config.get(l.__name__, {})), SONG_LINT_CLASSES),
+            'Liturgy': map(lambda l: l(config.get(l.__name__, {})), LITURGY_LINT_CLASSES)
         }
 
     def lint(self, filename):
