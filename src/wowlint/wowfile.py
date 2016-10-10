@@ -1,7 +1,6 @@
 import sys
 
-from construct import If, MetaArray, OneOf, Optional, Padding, PascalString, String, Struct, UBInt8
-from construct.core import Adapter
+from construct import Adapter, CString, If, IfThenElse, Magic, MetaArray, OneOf, Optional, Padding, PascalString, String, Struct, Switch, UBInt8, ULInt16, Value
 from enum import Enum
 
 
@@ -49,7 +48,7 @@ from enum import Enum
 #    * 2 - bridge
 #    *
 #    * === LINES ===
-#    *   [# of bytes in line]
+#    *   [# of bytes in line] - one byte, or if 0xFF, the following two bytes (little-endian)
 #    *   Line text
 #    *   [LINETYPE]
 #    *
@@ -91,14 +90,30 @@ def valuesOf(enum):
     return map(lambda x: x.value, enum)
 
 
+def findFormat(ctx):
+    if 'format' in ctx:
+        return ctx.format
+    if '_' in ctx:
+        return findFormat(ctx._)
+    return 0
+
+
 Line = Struct(
     "line",
-    PascalString("text"),
+    UBInt8("length"),
+    IfThenElse(
+        "length",
+        lambda ctx: ctx.length == 0xFF,
+        ULInt16("length"),
+        Value("length", lambda ctx: ctx.length)
+    ),
+    String("text", length=lambda ctx: ctx.length, encoding="windows-1252"),
     If(
-        lambda ctx: ctx._._.format == 1,  # 0 = Really old WoW format without minor words
+        lambda ctx: findFormat(ctx) == 1,  # 0 = Really old WoW format without minor words
         EnumAdapter(LineType, OneOf(UBInt8("type"), valuesOf(LineType))),
         LineType.NORMAL
-    )
+    ),
+    allow_overwrite=True
 )
 
 
@@ -114,18 +129,12 @@ Block = Struct(
 
 Song = Struct(
     "song",
-    OneOf(String("header", 8), ['WoW File']),
-    Padding(1),
-    OneOf(String("filetype", 10), ['Song Words']),
-    Padding(5),
-    UBInt8("format"),
-    Padding(31),
     UBInt8("blockcount"),
     Padding(9),
-    OneOf(String("csongdoc", 14), ['CSongDoc::CBlo']),  # The 'ck' is considered padding at start of block
+    Magic('CSongDoc::CBlo'),  # The 'ck' is considered padding at start of block
     MetaArray(lambda ctx: ctx.blockcount, Block),
-    PascalString("author"),
-    PascalString("copyright"),
+    PascalString("author", encoding="windows-1252"),
+    PascalString("copyright", encoding="windows-1252"),
     Optional(
         Struct(
             "license",
@@ -135,8 +144,34 @@ Song = Struct(
     )
 )
 
+Liturgy = Struct(
+    'liturgy',
+    UBInt8("linecount"),
+    Padding(3),
+    MetaArray(lambda ctx: ctx.linecount, Line)
+)
+
+RESOURCE_MAPPING = {
+    'Song Words': Song,
+    'Liturgy': Liturgy
+}
+
+Resource = Struct(
+    "resource",
+    Magic("WoW File\n"),
+    OneOf(CString("filetype", encoding="windows-1252", terminators="\x00\n"), RESOURCE_MAPPING.keys()),
+    Padding(4),
+    UBInt8("format"),
+    Padding(31),
+    Switch(
+        "content",
+        lambda ctx: ctx.filetype,
+        RESOURCE_MAPPING
+    )
+)
+
 
 if __name__ == "__main__":
     filename = sys.argv[1]
     with open(filename, "rb") as f:
-        print Song.parse(f.read())
+        print Resource.parse(f.read())
