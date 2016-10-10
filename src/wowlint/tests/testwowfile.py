@@ -50,3 +50,12 @@ class TestSongFile(unittest.TestCase):
 
             line3 = lit.content.line[2]
             self.assertEqual("", line3.text)
+
+    def testParseLongLineLit(self):
+        with getTestFile("testLongLine.wlt") as f:
+            lit = Resource.parse(f.read())
+
+            self.assertEqual("Liturgy", lit.filetype)
+            self.assertEqual(2, lit.content.linecount)
+            longLine = lit.content.line[1]
+            self.assertEqual(659, len(longLine.text))
