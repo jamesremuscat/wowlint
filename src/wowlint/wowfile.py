@@ -1,6 +1,6 @@
 import sys
 
-from construct import CString, Adapter, If, Magic, MetaArray, OneOf, Optional, Padding, PascalString, Struct, Switch, UBInt8
+from construct import Adapter, CString, If, IfThenElse, Magic, MetaArray, OneOf, Optional, Padding, PascalString, String, Struct, Switch, UBInt8, ULInt16, Value
 from enum import Enum
 
 
@@ -48,7 +48,7 @@ from enum import Enum
 #    * 2 - bridge
 #    *
 #    * === LINES ===
-#    *   [# of bytes in line]
+#    *   [# of bytes in line] - one byte, or if 0xFF, the following two bytes (little-endian)
 #    *   Line text
 #    *   [LINETYPE]
 #    *
@@ -97,14 +97,23 @@ def findFormat(ctx):
         return findFormat(ctx._)
     return 0
 
+
 Line = Struct(
     "line",
-    PascalString("text", encoding="windows-1252"),
+    UBInt8("length"),
+    IfThenElse(
+        "length",
+        lambda ctx: ctx.length == 0xFF,
+        ULInt16("length"),
+        Value("length", lambda ctx: ctx.length)
+    ),
+    String("text", length=lambda ctx: ctx.length, encoding="windows-1252"),
     If(
         lambda ctx: findFormat(ctx) == 1,  # 0 = Really old WoW format without minor words
         EnumAdapter(LineType, OneOf(UBInt8("type"), valuesOf(LineType))),
         LineType.NORMAL
-    )
+    ),
+    allow_overwrite=True
 )
 
 
