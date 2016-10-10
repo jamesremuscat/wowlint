@@ -22,7 +22,7 @@ setup(
     author='James Muscat',
     author_email='jamesremuscat@gmail.com',
     url='https://github.com/jamesremuscat/wowlint',
-    install_requires=['construct', 'enum34', 'pyenchant', 'pyyaml'],
+    install_requires=['construct==2.5.2', 'enum34', 'pyenchant', 'pyyaml'],
     setup_requires=['nose>=1.0'],
     # tests_require = ['mock'],
     packages=find_packages('src', exclude=["*.tests"]),
