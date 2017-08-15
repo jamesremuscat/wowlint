@@ -29,7 +29,8 @@ setup(
     package_dir = {'':'src'},
     entry_points={
         'console_scripts': [
-            'wowlint = wowlint.command:main'
+            'wowlint = wowlint.command:main',
+            'wow2text = wowlint.wow2text:main'
         ],
     }
 )
