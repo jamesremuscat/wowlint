@@ -49,6 +49,7 @@ def liturgy_to_text(liturgy):
         result += '\n'
     return result
 
+
 _RESOURCE_MAPPING = {
     'Song Words': song_to_text,
     'Liturgy': liturgy_to_text
@@ -68,6 +69,7 @@ def main():
                     of.write(as_text)
             else:
                 print "Unknown file type {}".format(resource.filetype)
+
 
 if __name__ == '__main__':
     main()
