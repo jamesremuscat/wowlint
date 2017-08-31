@@ -71,7 +71,6 @@ raised (e.g. you try to encode Chinese characters into us-ascii).'''
 
 def main():
     args = _create_arg_parser().parse_args()
-    print args
     for wowfile in args.files:
         with open(wowfile, 'rb') as f:
             resource = Resource.parse(f.read())
