@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
+import argparse
 import io
 import os
-import sys
 
 from wowlint.wowfile import Resource, BlockType
 
@@ -56,8 +56,23 @@ _RESOURCE_MAPPING = {
 }
 
 
+def _create_arg_parser():
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument('--encoding', default='utf-8',
+                        help='''Character encoding to use in output (default utf-8, may require windows-1252 for Windows).
+If characters are encountered in the source file that cannot be encoded in the chosen character set, an error will be
+raised (e.g. you try to encode Chinese characters into us-ascii).'''
+                        )
+    parser.add_argument('files', help='Words of Worship file (song or liturgy) to process', metavar='wowfile', nargs='+')
+
+    return parser
+
+
 def main():
-    for wowfile in sys.argv[1:]:
+    args = _create_arg_parser().parse_args()
+    print args
+    for wowfile in args.files:
         with open(wowfile, 'rb') as f:
             resource = Resource.parse(f.read())
             outfile = '{}.txt'.format(os.path.splitext(wowfile)[0])
@@ -65,7 +80,7 @@ def main():
 
             if resource.filetype in _RESOURCE_MAPPING:
                 as_text = _RESOURCE_MAPPING[resource.filetype](resource)
-                with io.open(outfile, 'w', encoding='utf-8') as of:
+                with io.open(outfile, 'w', encoding=args.encoding) as of:
                     of.write(as_text)
             else:
                 print "Unknown file type {}".format(resource.filetype)
