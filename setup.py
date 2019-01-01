@@ -1,5 +1,5 @@
+from __future__ import print_function
 import re
-
 from setuptools import setup, find_packages
 
 
@@ -12,7 +12,7 @@ try:
     if mo:
         verstr = mo.group(1)
 except EnvironmentError:
-    print "unable to find version in %s" % (VERSIONFILE,)
+    print("unable to find version in %s" % (VERSIONFILE,))
     raise RuntimeError("if %s exists, it is required to be well-formed" % (VERSIONFILE,))
 
 setup(
