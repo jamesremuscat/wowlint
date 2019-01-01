@@ -16,11 +16,11 @@ def plural(num):
 
 def wowlint(args, stream=sys.stdout, config={}):
 
-    linter = Linter(Severity.ERROR if args.errors_only else None, config)
+    linter = Linter(Severity.ERROR if args.errors_only else Severity.WARNING, config)
 
     longestFileName = 0
 
-    highestSeverityEncountered = None
+    highestSeverityEncountered = Severity.INFO
 
     countFiles = 0
     countFilesWithError = 0
@@ -32,7 +32,7 @@ def wowlint(args, stream=sys.stdout, config={}):
             countFiles += 1
             issues = linter.lint(subject)
             if len(issues) > 0:
-                highestSeverityEncountered = max(max(map(lambda i: i.severity, issues), highestSeverityEncountered))
+                highestSeverityEncountered = max(max(map(lambda i: i.severity, issues)), highestSeverityEncountered)
                 longestFileName = max(longestFileName, len(subject))
 
                 newErrors = len([i for i in issues if i.severity == Severity.ERROR])
@@ -45,15 +45,26 @@ def wowlint(args, stream=sys.stdout, config={}):
                     print(subject, file=stream)
                 else:
                     for issue in issues:
-                        print (
-                            u"{:{width}}: {:8} {}".format(
-                                subject.decode('utf-8'),
-                                issue.severity,
-                                issue.message,
-                                width=longestFileName + 2
-                            ).encode('utf-8'),
-                            file=stream
-                        )
+                        if sys.version_info[0] < 3:  # Python2 printing
+                            print (
+                                u"{:{width}}: {:8} {}".format(
+                                    subject.decode('utf-8'),
+                                    issue.severity,
+                                    issue.message,
+                                    width=longestFileName + 2
+                                ).encode('utf-8'),
+                                file=stream
+                            )
+                        else:  # Python3 printing
+                            print(
+                                "{:{width}}: {:8} {}".format(
+                                    subject,
+                                    issue.severity,
+                                    issue.message,
+                                    width=longestFileName + 2
+                                ),
+                                file=stream
+                            )
 
     if not (args.list or args.no_summary):
         if args.errors_only:
@@ -76,7 +87,7 @@ def wowlint(args, stream=sys.stdout, config={}):
                 file=stream
             )
 
-    if highestSeverityEncountered >= Severity.ERROR:
+    if highestSeverityEncountered and highestSeverityEncountered >= Severity.ERROR:
         return 1
 
 

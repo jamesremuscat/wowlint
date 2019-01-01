@@ -13,14 +13,14 @@ class Linter(object):
 
     KNOWN_EXTENSIONS = ['.wsg', '.wow-song', '.wlt', '.wow-liturgy']
 
-    def __init__(self, minSeverity=None, config={}):
+    def __init__(self, minSeverity=Severity.WARNING, config={}):
         self.minSeverity = minSeverity
 
-        commonLints = map(lambda l: l(config.get(l.__name__, {})), COMMON_LINT_CLASSES)
+        commonLints = list(map(lambda l: l(config.get(l.__name__, {})), COMMON_LINT_CLASSES))
 
         self.lints = {
-            'Song Words': map(lambda l: l(config.get(l.__name__, {})), SONG_LINT_CLASSES) + commonLints,
-            'Liturgy': map(lambda l: l(config.get(l.__name__, {})), LITURGY_LINT_CLASSES) + commonLints
+            'Song Wo': list(map(lambda l: l(config.get(l.__name__, {})), SONG_LINT_CLASSES)) + commonLints,
+            'Liturgy': list(map(lambda l: l(config.get(l.__name__, {})), LITURGY_LINT_CLASSES)) + commonLints
         }
 
     def lint(self, filename):
