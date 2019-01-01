@@ -1,3 +1,4 @@
+from __future__ import print_function
 import sys
 
 from construct import Adapter, CString, If, IfThenElse, Magic, MetaArray, OneOf, Optional, Padding, PascalString, String, Struct, Switch, UBInt8, ULInt16, Value
@@ -174,4 +175,4 @@ Resource = Struct(
 if __name__ == "__main__":
     filename = sys.argv[1]
     with open(filename, "rb") as f:
-        print Resource.parse(f.read())
+        print(Resource.parse(f.read()))

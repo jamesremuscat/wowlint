@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import print_function
 import argparse
 import io
 import os
@@ -75,14 +76,14 @@ def main():
         with open(wowfile, 'rb') as f:
             resource = Resource.parse(f.read())
             outfile = '{}.txt'.format(os.path.splitext(wowfile)[0])
-            print '{} ({}) => {}'.format(wowfile, resource.filetype, outfile)
+            print('{} ({}) => {}'.format(wowfile, resource.filetype, outfile))
 
             if resource.filetype in _RESOURCE_MAPPING:
                 as_text = _RESOURCE_MAPPING[resource.filetype](resource)
                 with io.open(outfile, 'w', encoding=args.encoding) as of:
                     of.write(as_text)
             else:
-                print "Unknown file type {}".format(resource.filetype)
+                print("Unknown file type {}".format(resource.filetype))
 
 
 if __name__ == '__main__':
