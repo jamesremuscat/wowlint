@@ -1,7 +1,7 @@
 from __future__ import print_function
 import sys
 
-from construct import this, Adapter, Byte, Bytes, Computed, Const, CString, If, IfThenElse, OneOf, Optional, Padding, PaddedString, PascalString,  Peek, RepeatUntil, Struct, Switch, Int8ub, Int16ul
+from construct import this, Adapter, Byte, Bytes, Computed, Const, CString, If, IfThenElse, OneOf, Optional, Padding, PaddedString, PascalString, Peek, RepeatUntil, Struct, Switch, Int8ub, Int16ul
 from enum import Enum
 
 
@@ -108,7 +108,7 @@ class WindowsStringAdapter(Adapter):
 
 
 NullOrNewlineTerminatedBytes = RepeatUntil(
-    lambda x,lst,ctx: x == 0 or x == 10,
+    lambda x, lst, ctx: x == 0 or x == 10,
     Byte
 )
 
