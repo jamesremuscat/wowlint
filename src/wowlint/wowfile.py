@@ -114,11 +114,11 @@ NullOrNewlineTerminatedBytes = RepeatUntil(
 
 
 Line = Struct(
-    "length" / Int8ub,
-    IfThenElse(
-        this.length == 0xFF,
-        "length" / Int16ul,
-        Computed(this.length)
+    "short_length" / Int8ub,
+    "length" / IfThenElse(
+        this.short_length == 0xFF,
+        Int16ul,
+        Computed(this.short_length)
     ),
     "text" / WindowsStringAdapter(Bytes(this.length)),
     "type" / IfThenElse(
@@ -155,7 +155,7 @@ Song = Struct(
 Liturgy = Struct(
     "linecount" / Int8ub,
     Padding(3),
-    "lines" / Line[this.linecount]
+    "line" / Line[this.linecount]
 )
 
 RESOURCE_MAPPING = {
