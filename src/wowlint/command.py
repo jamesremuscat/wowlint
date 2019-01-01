@@ -46,7 +46,7 @@ def wowlint(args, stream=sys.stdout, config={}):
                 else:
                     for issue in issues:
                         if sys.version_info[0] < 3:  # Python2 printing
-                            print (
+                            print(
                                 u"{:{width}}: {:8} {}".format(
                                     subject.decode('utf-8'),
                                     issue.severity,
@@ -68,7 +68,7 @@ def wowlint(args, stream=sys.stdout, config={}):
 
     if not (args.list or args.no_summary):
         if args.errors_only:
-            print (
+            print(
                 "{} file{}, {} failed, {} error{}".format(
                     countFiles, plural(countFiles),
                     countFilesWithError,
@@ -77,7 +77,7 @@ def wowlint(args, stream=sys.stdout, config={}):
                 file=stream
             )
         else:
-            print (
+            print(
                 "{} file{}, {} failed, {} error{}, {} warning{}".format(
                     countFiles, plural(countFiles),
                     countFilesWithError,
