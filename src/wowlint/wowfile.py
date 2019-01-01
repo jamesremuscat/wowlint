@@ -1,7 +1,7 @@
 from __future__ import print_function
 import sys
 
-from construct import Adapter, CString, If, IfThenElse, Magic, MetaArray, OneOf, Optional, Padding, PascalString, String, Struct, Switch, UBInt8, ULInt16, Value
+from construct import this, Adapter, Bytes, Computed, Const, CString, If, IfThenElse, OneOf, Optional, Padding, PaddedString, PascalString, Probe, Peek, Struct, Switch, Int8ub, Int16ul
 from enum import Enum
 
 
@@ -80,15 +80,15 @@ class EnumAdapter(Adapter):
         super(Adapter, self).__init__(subcon)
         self.enumClass = enumClass
 
-    def _encode(self, obj, context):
+    def _encode(self, obj, context, path):
         return obj.value
 
-    def _decode(self, obj, context):
+    def _decode(self, obj, context, path):
         return self.enumClass(obj)
 
 
 def valuesOf(enum):
-    return map(lambda x: x.value, enum)
+    return list(map(lambda x: x.value, enum))
 
 
 def findFormat(ctx):
@@ -100,73 +100,69 @@ def findFormat(ctx):
 
 
 Line = Struct(
-    "line",
-    UBInt8("length"),
+    "length" / Int8ub,
     IfThenElse(
-        "length",
-        lambda ctx: ctx.length == 0xFF,
-        ULInt16("length"),
-        Value("length", lambda ctx: ctx.length)
+        this.length == 0xFF,
+        "length" / Int16ul,
+        Computed(this.length)
     ),
-    String("text", length=lambda ctx: ctx.length, encoding="windows-1252"),
-    If(
+    "bytes" / Bytes(this.length),
+    "text" / Computed(lambda this: this.bytes.decode('windows-1252')),
+    "type" / IfThenElse(
         lambda ctx: findFormat(ctx) == 1,  # 0 = Really old WoW format without minor words
-        EnumAdapter(LineType, OneOf(UBInt8("type"), valuesOf(LineType))),
-        LineType.NORMAL
-    ),
-    allow_overwrite=True
+        EnumAdapter(LineType, OneOf(Int8ub, valuesOf(LineType))),
+        Computed(LineType.NORMAL)
+    )
 )
 
-
 Block = Struct(
-    "block",
     Padding(2),
-    UBInt8("linecount"),
+    "linecount" / Int8ub,
     Padding(3),
-    MetaArray(lambda ctx: ctx.linecount, Line),
-    EnumAdapter(BlockType, OneOf(UBInt8("type"), valuesOf(BlockType))),
+    "line" / Line[this.linecount],
+    "type" / EnumAdapter(BlockType, OneOf(Int8ub, valuesOf(BlockType))),
     Padding(3)
 )
 
 Song = Struct(
-    "song",
-    UBInt8("blockcount"),
+    "blockcount" / Int8ub,
     Padding(9),
-    Magic('CSongDoc::CBlo'),  # The 'ck' is considered padding at start of block
-    MetaArray(lambda ctx: ctx.blockcount, Block),
-    PascalString("author", encoding="windows-1252"),
-    PascalString("copyright", encoding="windows-1252"),
-    Optional(
+    Const(b'CSongDoc::CBlo'),  # The 'ck' is considered padding at start of block
+    "block" / Block[this.blockcount],
+    "author" / PascalString(Int8ub, encoding="windows-1252"),
+    "copyright" / PascalString(Int8ub, encoding="windows-1252"),
+    "license" / Optional(
         Struct(
-            "license",
-            EnumAdapter(LicenseType, OneOf(UBInt8("type"), valuesOf(LicenseType))),
+            "type" / EnumAdapter(LicenseType, OneOf(Int8ub, valuesOf(LicenseType))),
             Padding(3)
         )
     )
 )
 
 Liturgy = Struct(
-    'liturgy',
-    UBInt8("linecount"),
+    "linecount" / Int8ub,
     Padding(3),
-    MetaArray(lambda ctx: ctx.linecount, Line)
+    "lines" / Line[this.linecount]
 )
 
 RESOURCE_MAPPING = {
-    'Song Words': Song,
+    'Song Wo': Song,
     'Liturgy': Liturgy
 }
 
 Resource = Struct(
-    "resource",
-    Magic("WoW File\n"),
-    OneOf(CString("filetype", encoding="windows-1252", terminators="\x00\n"), RESOURCE_MAPPING.keys()),
+    Const(b"WoW File\n"),
+    "filetype" / OneOf(PaddedString(7, encoding="utf-8"), RESOURCE_MAPPING.keys()),
+    If(  # Hacky hack: we can no longer easily just get a "null-or-newline-terminated" string here :(
+        this.filetype == 'Song Wo',
+        Padding(3)
+    ),
+    Padding(1),
     Padding(4),
-    UBInt8("format"),
+    "format" / Int8ub,
     Padding(31),
-    Switch(
-        "content",
-        lambda ctx: ctx.filetype,
+    "content" / Switch(
+        this.filetype,
         RESOURCE_MAPPING
     )
 )
