@@ -46,7 +46,7 @@ class NoInitialCapital(LinewiseLint):
     severity = Severity.WARNING
 
     def validate_line(self, blockIndex, lineIndex, line):
-        if line.text[0] != line.text[0].upper():
+        if len(line.text) > 0 and line.text[0] != line.text[0].upper():
             return [self.create_issue(blockIndex, lineIndex)]
 
 

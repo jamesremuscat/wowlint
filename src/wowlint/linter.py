@@ -19,7 +19,7 @@ class Linter(object):
         commonLints = list(map(lambda l: l(config.get(l.__name__, {})), COMMON_LINT_CLASSES))
 
         self.lints = {
-            'Song Wo': list(map(lambda l: l(config.get(l.__name__, {})), SONG_LINT_CLASSES)) + commonLints,
+            'Song Words': list(map(lambda l: l(config.get(l.__name__, {})), SONG_LINT_CLASSES)) + commonLints,
             'Liturgy': list(map(lambda l: l(config.get(l.__name__, {})), LITURGY_LINT_CLASSES)) + commonLints
         }
 

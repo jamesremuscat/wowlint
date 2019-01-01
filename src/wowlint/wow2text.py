@@ -52,7 +52,7 @@ def liturgy_to_text(liturgy):
 
 
 _RESOURCE_MAPPING = {
-    'Song Wo': song_to_text,
+    'Song Words': song_to_text,
     'Liturgy': liturgy_to_text
 }
 

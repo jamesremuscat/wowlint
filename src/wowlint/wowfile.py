@@ -1,7 +1,7 @@
 from __future__ import print_function
 import sys
 
-from construct import this, Adapter, Bytes, Computed, Const, CString, If, IfThenElse, OneOf, Optional, Padding, PaddedString, PascalString, Probe, Peek, Struct, Switch, Int8ub, Int16ul
+from construct import this, Adapter, Byte, Bytes, Computed, Const, CString, If, IfThenElse, OneOf, Optional, Padding, PaddedString, PascalString,  Peek, RepeatUntil, Struct, Switch, Int8ub, Int16ul
 from enum import Enum
 
 
@@ -99,6 +99,20 @@ def findFormat(ctx):
     return 0
 
 
+class WindowsStringAdapter(Adapter):
+    def _encode(self, obj, context, path):
+        return obj.encode('windows-1252')
+
+    def _decode(self, obj, context, path):
+        return bytearray(obj).decode('windows-1252').strip()
+
+
+NullOrNewlineTerminatedBytes = RepeatUntil(
+    lambda x,lst,ctx: x == 0 or x == 10,
+    Byte
+)
+
+
 Line = Struct(
     "length" / Int8ub,
     IfThenElse(
@@ -106,8 +120,7 @@ Line = Struct(
         "length" / Int16ul,
         Computed(this.length)
     ),
-    "bytes" / Bytes(this.length),
-    "text" / Computed(lambda this: this.bytes.decode('windows-1252')),
+    "text" / WindowsStringAdapter(Bytes(this.length)),
     "type" / IfThenElse(
         lambda ctx: findFormat(ctx) == 1,  # 0 = Really old WoW format without minor words
         EnumAdapter(LineType, OneOf(Int8ub, valuesOf(LineType))),
@@ -146,18 +159,16 @@ Liturgy = Struct(
 )
 
 RESOURCE_MAPPING = {
-    'Song Wo': Song,
+    'Song Words': Song,
     'Liturgy': Liturgy
 }
 
 Resource = Struct(
     Const(b"WoW File\n"),
-    "filetype" / OneOf(PaddedString(7, encoding="utf-8"), RESOURCE_MAPPING.keys()),
-    If(  # Hacky hack: we can no longer easily just get a "null-or-newline-terminated" string here :(
-        this.filetype == 'Song Wo',
-        Padding(3)
+    "filetype" / OneOf(
+        WindowsStringAdapter(NullOrNewlineTerminatedBytes),
+        RESOURCE_MAPPING.keys()
     ),
-    Padding(1),
     Padding(4),
     "format" / Int8ub,
     Padding(31),
